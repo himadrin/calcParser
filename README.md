@@ -28,7 +28,7 @@ We want to export a module Calc which contains:
 
  * Implementation.hs - takes in user input, does the math, creates a CalcDoc.
 
- * Output.hs - formates our CalcDoc in the appropriate way - whether we decide to print it/output it in a differeny way. 
+ * Output.hs - formates our CalcDoc in the appropriate way - whether we decide to print it/output it in a different way. 
 
 You can find our github repo here: https://github.com/himadrin/calcParser
 
