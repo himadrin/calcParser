@@ -1,0 +1,4 @@
+law1: x + 0 = x
+law2: 0 * x = 0
+law_addition: derive(x, a + b) = derive(x, a) + derive(x, b)
+law_product: derive()
