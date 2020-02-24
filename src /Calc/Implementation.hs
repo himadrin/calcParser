@@ -1,2 +1,0 @@
-module Calc.Implementation where
-    

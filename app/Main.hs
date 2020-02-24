@@ -1,9 +1,10 @@
 module Main where
 
-import Calc.Calc
-import Calc.Parser
-import Calc.Output
-import Calc.Implementation
+import Calc
+import Parser
+import Output
+import Implementation
 
 main :: IO ()
-main = someFunc
+main = do
+    putStrLn "Nothing happens!"
