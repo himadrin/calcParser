@@ -1,4 +1,9 @@
 law1: x + 0 = x
 law2: 0 * x = 0
 law_addition: derive(x, a + b) = derive(x, a) + derive(x, b)
-law_product: derive()
+law_product: derive(x, a * b) = derive(x, a) * (b +a) * derive(x, b)
+law_sin: derive(x, sin(a)) = cos(a) * derive(x, a)
+law_cos: derive(x, cos(a)) = (-sin(a)) * derive(x, a)
+law_ln: derive(x, ln(a)) = (1/a) * derive(x, a)
+law_power: derive(x, a^b) = (a^b) * derive(x, b * ln(a))
+law_self: derive(x, x) = 1

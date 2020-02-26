@@ -6,6 +6,7 @@ module Implementation where
     import Data.Void
     import Control.Monad.Combinators.Expr
     import qualified Text.Megaparsec.Char.Lexer as L
+    import System.IO()
     
     data Law = Law String Equation 
         deriving Show
@@ -136,19 +137,34 @@ module Implementation where
                         return Subt} <|>
                 do  {_ <- string "^";
                         return Power}
+-- **COULD NOT GET READFILE TO WORK**
+    --getlaws :: [String]
+    -- getlaws = do {
+        -- lawstext <- liftM lines (readFile "src/laws/Laws.txt");
+        --let list = lines lawstext; 
+        -- return lawstext}
 
         -- TODO: PARSE LAWS!
+    
     pLaw :: Implementation.Parser Law
     pLaw = do {
-        name <- upto ':' ; 
-        e1 <- pExprL;
-        _ <- space;
-        _ <- string "=";
-        _ <- space; 
-        e2 <- pExprL; 
-        return (Law name (e1,e2))}
+            name <- upto ':' ; 
+            e1 <- pExprL;
+            _ <- space;
+            _ <- string "=";
+            _ <- space; 
+            e2 <- pExprL; 
+            return (Law name (e1,e2))}
 
     upto :: Token [Char] -> Implementation.Parser String
-    upto c = (char c *> return []) <|> ((:) <$> anySingle <*> upto c) 
+    upto c = (char c *> return []) <|> ((:) <$> anySingle <*> upto c)
 
+    -- laws essentially from parser results
+    law_addition = Law "law addition" (Derive (Var 'x') (TwoOp Add (Var 'a') (Var 'b')),TwoOp Add (Derive (Var 'x') (Var 'a')) (Derive (Var 'x') (Var 'b')))
+    law_product = Law "law_product" (Derive (Var 'x') (TwoOp Mult (Var 'a') (Var 'b')),TwoOp Mult (TwoOp Mult (Derive (Var 'x') (Var 'a')) (TwoOp Add (Var 'b') (Var 'a'))) (Derive (Var 'x') (Var 'b')))
+    law_sin = Law "law_sin" (Derive (Var 'x') (OneOp Sin (Var 'a')),TwoOp Mult (OneOp Cos (Var 'a')) (Derive (Var 'x') (Var 'a')))
+    law_cos = Law "law_cos" (Derive (Var 'x') (OneOp Cos (Var 'a')),TwoOp Mult (OneOp Neg (OneOp Sin (Var 'a'))) (Derive (Var 'x') (Var 'a')))
+    law_ln = Law "law_ln" (Derive (Var 'x') (OneOp Ln (Var 'a')),TwoOp Mult (TwoOp Div (Const 1) (Var 'a')) (Derive (Var 'x') (Var 'a')))
+    law_power = Law "law_power" (Derive (Var 'x') (TwoOp Power (Var 'a') (Var 'b')),TwoOp Mult (TwoOp Power (Var 'a') (Var 'b')) (Derive (Var 'x') (TwoOp Mult (Var 'b') (OneOp Ln (Var 'a')))))
+    law_self = Law "law_self" (Derive (Var 'x') (Var 'x'),Const 1)
         -- TODO: HAVE LAWS RECOGNIZE EXPRESSIONS!
