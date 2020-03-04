@@ -179,11 +179,13 @@ module Implementation where
 
     --matches expressions to come up with a list of substitutions
     matchFunc :: Expr -> Expr -> [Subst]
-    matchFunc (Derive varL exprL) (Derive varE exprE) = [left ++ right | left <- matchFunc varL varE, right <- matchFunc exprL exprE, compatible left right]
+    matchFunc (Derive varL exprL) (Derive varE exprE) = [vars ++ exprs | vars <- matchFunc varL varE, exprs <- matchFunc exprL exprE, compatible vars exprs]
     matchFunc (TwoOp op1 expLeftL expRightL) (TwoOp op2 expLeftE expRightE) | op1 == op2 = if matchFunc expLeftL expLeftE == [] || matchFunc expRightL expRightE == [] then []
         else [left ++ right | left <- matchFunc expLeftL expLeftE, right <- matchFunc expRightL expRightE,  compatible left right] | otherwise = []
     matchFunc (OneOp op1 exprL) (OneOp op2 exprE) | op1 == op2 = matchFunc exprL exprE | otherwise = []
     matchFunc (Var v) expr = [[(Var v, expr)]]
+    --write for constants
+    
     matchFunc _ _ = []
 
     --TO DO: WRITE THIS FUNC! 

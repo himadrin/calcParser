@@ -13,16 +13,15 @@ module Output where
 
     --one step
     makeStep :: [Law] -> Expr -> [Step]
-    makeStep ls e = [Step name res | Law name (e1, e2) <- ls, res <- (rewrites e1 e2 e)]
+    makeStep law_list expression = [Step name res | Law name (e1, e2) <- law_list, res <- (rewrites e1 e2 expression)]
 
     --list of steps
     manyStep :: [Law] -> Expr -> [Step]
-    manyStep ls e = case steps of
+    manyStep law_list expression = case steps of
                         [] -> []
-                        (Step name exp):_ -> (Step name exp) : (manyStep ls exp)
-                    where steps = makeStep ls e
+                        (Step name exp):_ -> (Step name exp) : (manyStep law_list expression)
+                        where steps = makeStep law_list expression
 
     --creates a calculation
     derive :: [Law] -> Expr -> Calculation
-    derive ls e = Calculation e (manyStep ls e)
-        
+    derive law_list expression = Calculation e (manyStep law_list expression)
