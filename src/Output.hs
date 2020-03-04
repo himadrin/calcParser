@@ -11,17 +11,9 @@ module Output where
     import System.IO()
     import Prelude hiding (exp)
 
-    --one step
-    makeStep :: [Law] -> Expr -> [Step]
-    makeStep law_list expression = [Step name res | Law name (e1, e2) <- law_list, res <- (rewrites e1 e2 expression)]
-
     --list of steps
-    manyStep :: [Law] -> Expr -> [Step]
-    manyStep law_list expression = case steps of
+    stepList :: [Law] -> Expr -> [Step]
+    stepList law_list expression = case steps of
                         [] -> []
-                        (Step name exp):_ -> (Step name exp) : (manyStep law_list expression)
-                        where steps = makeStep law_list expression
-
-    --creates a calculation
-    derive :: [Law] -> Expr -> Calculation
-    derive law_list expression = Calculation e (manyStep law_list expression)
+                        (Step name exp):_ -> (Step name exp) : (stepList law_list exp)
+                    where steps = [Step name new_exp | Law name (e1, e2) <- law_list, new_exp <- (rewrites e1 e2 expression)]

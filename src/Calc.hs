@@ -3,10 +3,10 @@ module Calc where
     import Text.Megaparsec.Char
     import Data.Void
 
-    data Law = Law LawName Equation 
+    data Law = Law LawName Equation
         deriving (Eq)
     type LawName = String
-    type Equation = (Expr,Expr)
+    type Equation = (Expr, Expr)
     type Parser = Parsec Void String 
     type Subst = [(Expr, Expr)]
 
@@ -33,7 +33,7 @@ module Calc where
           | Const Int
           deriving (Eq)
 
-    -- show instances
+    -- show instances https://stackoverflow.com/questions/12537120/making-a-data-type-an-instance-of-show-in-haskell
     instance Show BOp where
         show Add = " + "
         show Mult = " * "
@@ -58,6 +58,3 @@ module Calc where
 
     instance Show Step where
         show (Step name exp) = "= {" ++ (show name) ++ "}\n" ++ (show exp) ++ "\n"
-
-    instance Show Calculation where
-        show (Calculation exp steps) = (show exp) ++ "\n" ++ (concatMap (show) (steps))

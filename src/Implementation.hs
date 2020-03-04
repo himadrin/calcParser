@@ -15,6 +15,9 @@ module Implementation where
     test1 :: Expr
     test1 = (Derive (Var 'x') (TwoOp Power (Var 'x') (Const 3)))
 
+    test8 :: Expr
+    test8 = (Derive (Var 'x') (TwoOp Power (Var 'x') (Var 'y')))
+
     test2 :: Expr
     test2 = (Derive (Var 'x') (TwoOp Mult (Var 'a') (Var 'b')))
 
@@ -168,14 +171,7 @@ module Implementation where
     law_ln = Law "law_ln" (Derive (Var 'x') (OneOp Ln (Var 'a')),TwoOp Mult (TwoOp Div (Const 1) (Var 'a')) (Derive (Var 'x') (Var 'a')))
     law_power = Law "law_power" (Derive (Var 'x') (TwoOp Power (Var 'a') (Var 'b')),TwoOp Mult (TwoOp Power (Var 'a') (Var 'b')) (Derive (Var 'x') (TwoOp Mult (Var 'b') (OneOp Ln (Var 'a')))))
     law_self = Law "law_self" (Derive (Var 'x') (Var 'x'),Const 1)
-    law_zero_mult_zero = Law "law_zero_mult_zero" (TwoOp Mult (Var 'x')(Const 0), Const 0)
-    law_zero_mult_zero2 = Law "law_zero_mult_zero" (TwoOp Mult (Const 0)(Var 'x'), Const 0)
-    law_one_mult = Law "law_one_mult" (TwoOp Mult (Var 'x') (Const 1), Var 'x')
-    law_one_mult2 = Law "law_one_mult2" (TwoOp Mult (Const 1)(Var 'x'), Var 'x')
-    law_add_zero = Law "law_add_zero" (TwoOp Add (Var 'x') (Const 0), Var 'x')
-    law_add_zero2 = Law "law_add_zero2" (TwoOp Add (Const 0) (Var 'x'), Var 'x')
-    law_list = [law_addition, law_cos, law_power, law_product, law_sin, law_ln, law_self, law_zero_mult_zero, 
-                law_zero_mult_zero2, law_one_mult, law_one_mult2, law_add_zero, law_add_zero2]
+    law_list = [law_addition, law_cos, law_power, law_product, law_sin, law_ln, law_self]
 
     --matches expressions to come up with a list of substitutions
     matchFunc :: Expr -> Expr -> [Subst]
@@ -185,12 +181,15 @@ module Implementation where
     matchFunc (OneOp op1 exprL) (OneOp op2 exprE) | op1 == op2 = matchFunc exprL exprE | otherwise = []
     matchFunc (Var v) expr = [[(Var v, expr)]]
     --write for constants
-    
     matchFunc _ _ = []
 
     --TO DO: WRITE THIS FUNC! 
     compatible :: Subst -> Subst -> Bool
-    compatible _ _ = True
+    compatible sub1 sub2 = and [e1 == e2 | (v1, e1) <- sub1, (v2, e2) <-sub2, v1==v2]
+
+
+    sub = [((Var 'x'),(Const 3)), ((Var 'y'),(Const 4))]
+    exp = (TwoOp Add (Var 'x')(Var 'y'))
 
     -- applies substitutions to expressions
     apply :: Subst -> Expr -> Expr
@@ -198,15 +197,24 @@ module Implementation where
     apply substitution (TwoOp op left right) = TwoOp op (apply substitution left) (apply substitution right)
     apply substitution (OneOp op exp) = OneOp op (apply substitution exp)
     apply ((var,exp): substitution) (Var v) | var == (Var v) = exp | otherwise = apply substitution (Var v)
-    apply [] v = v
-    apply _ (Const i) = (Const i)
-
+    apply [] (Var v) = (Var v)
+    apply _ (Const c) = (Const c)
     --recombines expression
+
+    e1 = Derive (Var 'x') (TwoOp Add (Var 'a') (Var 'b'))
+    e2 = TwoOp Add (Derive (Var 'x') (Var 'a')) (Derive (Var 'x') (Var 'b'))
+    e3 = Derive (Var 'x') (TwoOp Add (Var 'x') (Const 3))
+
     rewrites :: Expr -> Expr -> Expr -> [Expr]
-    rewrites e1 e2 exp
-        = [apply substitution e2 | substitution <- matchFunc e1 exp] ++
-            case exp of
-                (TwoOp op left right) -> [TwoOp op left' right | left' <- rewrites e1 e2 left] ++ [TwoOp op left right' | right' <- rewrites e1 e2 right]
-                (OneOp op exp) -> [OneOp op exp' | exp' <- rewrites e1 e2 exp]
-                (Derive var exp) -> [Derive var exp' | exp' <- rewrites e1 e2 exp]
+    rewrites e1 e2 expression
+        = helperRW e1 e2 expression ++
+            case expression of
+                (Derive var exp) -> [Derive var new_exp | new_exp <- rewrites e1 e2 exp]
+                (TwoOp op left right) -> [TwoOp op new_expL right | new_expL <- rewrites e1 e2 left] 
+                                        ++ [TwoOp op left new_expR | new_expR <- rewrites e1 e2 right]
+                (OneOp op exp) -> [OneOp op new_exp | new_exp <- rewrites e1 e2 exp]
                 _ -> []
+
+
+    helperRW :: Expr -> Expr -> Expr -> [Expr]
+    helperRW e1 e2 exp = [apply substitution e2 | substitution <- matchFunc e1 exp]
