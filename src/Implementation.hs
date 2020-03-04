@@ -188,7 +188,8 @@ module Implementation where
 
     --TO DO: WRITE THIS FUNC! 
     compatible :: Subst -> Subst -> Bool
-    compatible _ _ = True
+    --compatible _ _ = True
+    compatible sub1 sub2 = and [e1 == e2 | (v1, e1) <- sub1, (v2, e2) <-sub2, v1==v2]
 
     -- applies substitutions to expressions
     apply :: Subst -> Expr -> Expr
