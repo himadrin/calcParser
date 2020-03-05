@@ -26,7 +26,7 @@ data Expr = TwoOp BOp Expr Expr
             | OneOp UOp Expr
             | Derive Expr Expr
             | Var Char
-            | Const Int
+            | Const Char
             deriving Show
 
 type Parser = Parsec Void String 
@@ -62,7 +62,7 @@ pTerm = (try $ do  {_ <- space;
                 _ <- space;
                 return (one)}) <|>
             (try $ do  {_ <- space;
-                d <- some digitChar;
+                d <- some alphaNumChar;
                 _ <- space;
                 return (Const (read d))}) <|>
             do  {_ <- space;

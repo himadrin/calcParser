@@ -13,7 +13,13 @@ module Implementation where
 
     --test expressions! need more
     test1 :: Expr
-    test1 = (Derive (Var 'x') (TwoOp Power (Var 'x') (Const 3)))
+    test1 = (Derive (Var 'x') (TwoOp Power (Var 'x') (Const '3')))
+
+    e4 :: Expr
+    e4 = Derive (Var 'x') (TwoOp Power (Var 'q') (Const 'p'))
+
+    e5 :: Expr
+    e5 = TwoOp Mult (Const 'p') (TwoOp Power (Var 'q') (TwoOp Subt (Const 'p')(Const '1')))
 
     test8 :: Expr
     test8 = (Derive (Var 'x') (TwoOp Power (Var 'x') (Var 'y')))
@@ -28,7 +34,7 @@ module Implementation where
     test4 = (Var 'y')
 
     test5 :: Subst
-    test5 = [(Var 'x',Var 'x'),(Var 'a',Const 2),(Var 'b',OneOp Ln (Var 'x'))]
+    test5 = [(Var 'x',Var 'x'),(Var 'a',Const '2'),(Var 'b',OneOp Ln (Var 'x'))]
 
     test6 :: Expr
     test6 = (Derive (Var 'x') (TwoOp Mult (Var 'x')(Var 'y')))
@@ -65,7 +71,7 @@ module Implementation where
                 _ <- space;
                 return (one)}) <|>
             (try $ do  {_ <- space;
-                d <- some digitChar;
+                d <- some alphaNumChar;
                 _ <- space;
                 return (Const (read d))}) <|>
             do  {_ <- space;
@@ -168,10 +174,11 @@ module Implementation where
     law_product = Law "law_product" (Derive (Var 'x') (TwoOp Mult (Var 'a') (Var 'b')), TwoOp Add (TwoOp Mult (Derive (Var 'x')(Var 'a'))(Var 'b'))(TwoOp Mult (Var 'a')(Derive (Var 'x')(Var 'b'))))
     law_sin = Law "law_sin" (Derive (Var 'x') (OneOp Sin (Var 'a')),TwoOp Mult (OneOp Cos (Var 'a')) (Derive (Var 'x') (Var 'a')))
     law_cos = Law "law_cos" (Derive (Var 'x') (OneOp Cos (Var 'a')),TwoOp Mult (OneOp Neg (OneOp Sin (Var 'a'))) (Derive (Var 'x') (Var 'a')))
-    law_ln = Law "law_ln" (Derive (Var 'x') (OneOp Ln (Var 'a')),TwoOp Mult (TwoOp Div (Const 1) (Var 'a')) (Derive (Var 'x') (Var 'a')))
+    law_ln = Law "law_ln" (Derive (Var 'x') (OneOp Ln (Var 'a')),TwoOp Mult (TwoOp Div (Const '1') (Var 'a')) (Derive (Var 'x') (Var 'a')))
     law_power = Law "law_power" (Derive (Var 'x') (TwoOp Power (Var 'a') (Var 'b')),TwoOp Mult (TwoOp Power (Var 'a') (Var 'b')) (Derive (Var 'x') (TwoOp Mult (Var 'b') (OneOp Ln (Var 'a')))))
-    law_self = Law "law_self" (Derive (Var 'x') (Var 'x'),Const 1)
-    law_list = [law_addition, law_cos, law_power, law_product, law_sin, law_ln, law_self]
+    law_self = Law "law_self" (Derive (Var 'x') (Var 'x'),Const '1')
+    law_power_const = Law "law_power_const" (Derive (Var 'x') (TwoOp Power (Var 'q') (Const 'p')), TwoOp Mult (Const 'p') (TwoOp Power (Var 'q') (TwoOp Subt (Const 'p')(Const '1'))))
+    law_list = [law_addition, law_power_const, law_cos, law_power, law_product, law_sin, law_ln, law_self]
 
     --matches expressions to come up with a list of substitutions
     matchFunc :: Expr -> Expr -> [Subst]
@@ -179,8 +186,10 @@ module Implementation where
     matchFunc (TwoOp op1 expLeftL expRightL) (TwoOp op2 expLeftE expRightE) | op1 == op2 = if matchFunc expLeftL expLeftE == [] || matchFunc expRightL expRightE == [] then []
         else [left ++ right | left <- matchFunc expLeftL expLeftE, right <- matchFunc expRightL expRightE,  compatible left right] | otherwise = []
     matchFunc (OneOp op1 exprL) (OneOp op2 exprE) | op1 == op2 = matchFunc exprL exprE | otherwise = []
-    matchFunc (Var v) expr = [[(Var v, expr)]]
+    matchFunc (Var v) expr@(Const _) = [[(Var v, expr)]]
+    matchFunc (Var v) expr | v /= 'p' && v /= 'q' = [[(Var v, expr)]] -- TODO: document in readme that p and q are special
     --write for constants
+    matchFunc (Const i) (Const j) | i == j = [[]]
     matchFunc _ _ = []
 
     --TO DO: WRITE THIS FUNC! 
@@ -188,7 +197,7 @@ module Implementation where
     compatible sub1 sub2 = and [e1 == e2 | (v1, e1) <- sub1, (v2, e2) <-sub2, v1==v2]
 
 
-    sub = [((Var 'x'),(Const 3)), ((Var 'y'),(Const 4))]
+    sub = [((Var 'x'),(Const '3')), ((Var 'y'),(Const '4'))]
     exp = (TwoOp Add (Var 'x')(Var 'y'))
 
     -- applies substitutions to expressions
@@ -203,7 +212,7 @@ module Implementation where
 
     e1 = Derive (Var 'x') (TwoOp Add (Var 'a') (Var 'b'))
     e2 = TwoOp Add (Derive (Var 'x') (Var 'a')) (Derive (Var 'x') (Var 'b'))
-    e3 = Derive (Var 'x') (TwoOp Add (Var 'x') (Const 3))
+    e3 = Derive (Var 'x') (TwoOp Add (Var 'x') (Const '3'))
 
     rewrites :: Expr -> Expr -> Expr -> [Expr]
     rewrites e1 e2 expression
