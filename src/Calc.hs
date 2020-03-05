@@ -30,7 +30,7 @@ module Calc where
           | OneOp UOp Expr
           | Derive Expr Expr
           | Var Char
-          | Const Int
+          | Const Char 
           deriving (Eq)
 
     -- show instances https://stackoverflow.com/questions/12537120/making-a-data-type-an-instance-of-show-in-haskell
