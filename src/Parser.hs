@@ -30,7 +30,7 @@ upto c = (char c *> return []) <|> ((:) <$> anySingle <*> upto c)
 
 parseLaw :: String -> Law
 parseLaw s = case parse (pLaw <* eof) "<stdin>" s of 
-  Left _ -> Law "error law" (Const '0', Const '0')
+  Left _ -> Law "error law" (Const 0, Const 0)
   Right law -> law
 
 pLaw :: Parser Law

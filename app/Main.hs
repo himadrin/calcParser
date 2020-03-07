@@ -10,11 +10,14 @@ import Text.Megaparsec
 import Control.Monad.Combinators.Expr
 import Data.Foldable
 
+--https://blogg.bekk.no/creating-a-repl-in-haskell-efcdef1deec2
+
 promptLine :: String -> IO String
 promptLine prompt
- = do putStr prompt
-      hFlush stdout
-      getLine
+ =do
+    putStr prompt
+    hFlush stdout
+    getLine
 {-
 parseExpr :: Parser Calc.Expr 
 parseExpr = do {
@@ -47,5 +50,5 @@ main = do
     --expression <- Parser.pExpr
     let expr = parseExpr expression
     let result = final law_list expr
-    doPrint (final law_list expr)
+    doPrint(result)
     
