@@ -1,4 +1,4 @@
-module Output where
+module Output(final) where
 
     -- import Parser as P
     import Calc
@@ -12,13 +12,13 @@ module Output where
     import Prelude hiding (exp)
 
     --list of steps
-    manyStep :: [Law] -> Expr -> [Step]
-    manyStep ls e = case steps of
+    stepList :: [Law] -> Expr -> [Step]
+    stepList law_list expression = case steps of
                         [] -> []
-                        (Step name exp):_ -> (Step name exp) : (manyStep ls exp)
-                    where steps = [Step name res | Law name (e1, e2) <- ls, res <- (rewrites e1 e2 e)]
+                        (Step name exp):_ -> (Step name exp) : (stepList law_list exp)
+                    where steps = [Step name new_exp | Law name (e1, e2) <- law_list, new_exp <- (rewrites e1 e2 expression)]
 
-    --creates a calculation
-    derive :: [Law] -> Expr -> Calculation
-    derive ls e = Calculation e (manyStep ls e)
-        
+    --handle expression and error
+    final :: [Law] -> Err Expr -> Err Calc
+    final law_list (Correct e) = Correct (Calc e (stepList law_list e))
+    final _ (Error string) = Error string

@@ -6,23 +6,46 @@ import Output
 import Implementation
 import Control.Monad     (unless)
 import System.IO
+import Text.Megaparsec
+import Control.Monad.Combinators.Expr
+import Data.Foldable
 
-read_ :: IO String
-read_ = putStr "DERIVE> "
-     >> hFlush stdout
-     >> getLine
+promptLine :: String -> IO String
+promptLine prompt
+ = do putStr prompt
+      hFlush stdout
+      getLine
+{-
+parseExpr :: Parser Calc.Expr 
+parseExpr = do {
+                expr <- pExpr;
+                _ <- space;
+                return (Expr expr)}
+-}
 
--- update to apply parser to expr, then take in file name for laws
-eval_ :: String -> String
-eval_ input = input
+doPrint :: Err Calc -> IO()
+doPrint calc = putStrLn (show calc)
 
-print_ :: String -> IO ()
-print_ = putStrLn
-
+-- printLaws :: Laws -> IO()
+-- printLaws laws = putStrLn show laws
 
 main :: IO ()
 main = do
-    input <- read_
-  
-    unless (input == ":quit")
-        $ print_ (eval_ input) >> main
+    --laws <- promptLine "File for laws: "
+    -- fileContent <- readFile "src/Laws.txt"
+    -- let lawslist = lines fileContent
+    --forM_ lawslist parseLaw
+    -- forM_ lawslist putStrLn
+    -- let lawsl = map parseLaw lawslist
+    -- printLaws lawsl
+    -- forM_ lawsl printLaws
+
+    --let lawsl = (concat . (map parseLaw)) lawslist
+    --forM_ lawsl putStrLn
+    --putStrLn(show lawsl)
+    expression <- promptLine "Expression to derive: "
+    --expression <- Parser.pExpr
+    let expr = parseExpr expression
+    let result = final law_list expr
+    doPrint (final law_list expr)
+    

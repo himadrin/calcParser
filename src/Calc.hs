@@ -1,18 +1,30 @@
 module Calc where
     import Text.Megaparsec
-    import Text.Megaparsec.Char
     import Data.Void
 
-    data Law = Law LawName Equation 
-        deriving (Eq)
+    data Law = Law LawName Equation
+        deriving (Eq, Show)
+    
+    type Laws = [Law]
     type LawName = String
-    type Equation = (Expr,Expr)
+    type Equation = (Expr, Expr)
     type Parser = Parsec Void String 
     type Subst = [(Expr, Expr)]
 
-    data Step = Step LawName Expr deriving Eq
-    data Calculation = Calculation Expr [Step]
+    data Err e = Correct e 
+            | Error String deriving (Eq)
 
+    data Step = Step LawName Expr deriving Eq
+    data Calc = Calc Expr [Step] deriving Eq
+
+    instance Show Calc where 
+        show (Calc _ steplist) = (concatMap (show) (steplist))
+
+    instance Show e => Show (Err e) where
+        show (Correct c) = show c
+        show (Error e) = e
+    -- instance Show Laws where
+    --    show laws = (concatMap (show) (laws))
     data BOp = Add 
           | Mult
           | Div 
@@ -30,10 +42,10 @@ module Calc where
           | OneOp UOp Expr
           | Derive Expr Expr
           | Var Char
-          | Const Int
+          | Const Char 
           deriving (Eq)
 
-    -- show instances
+    -- show instances https://stackoverflow.com/questions/12537120/making-a-data-type-an-instance-of-show-in-haskell
     instance Show BOp where
         show Add = " + "
         show Mult = " * "
@@ -58,6 +70,3 @@ module Calc where
 
     instance Show Step where
         show (Step name exp) = "= {" ++ (show name) ++ "}\n" ++ (show exp) ++ "\n"
-
-    instance Show Calculation where
-        show (Calculation exp steps) = (show exp) ++ "\n" ++ (concatMap (show) (steps))
