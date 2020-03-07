@@ -17,12 +17,6 @@ module Calc where
     data Step = Step LawName Expr deriving Eq
     data Calc = Calc Expr [Step] deriving Eq
 
-    instance Show Calc where 
-        show (Calc _ steplist) = (concatMap (show) (steplist))
-
-    instance Show e => Show (Err e) where
-        show (Correct c) = show c
-        show (Error e) = e
     -- instance Show Laws where
     --    show laws = (concatMap (show) (laws))
     data BOp = Add 
@@ -42,7 +36,7 @@ module Calc where
           | OneOp UOp Expr
           | Derive Expr Expr
           | Var Char
-          | Const Char 
+          | Const Int 
           deriving (Eq)
 
     -- show instances https://stackoverflow.com/questions/12537120/making-a-data-type-an-instance-of-show-in-haskell
@@ -70,3 +64,11 @@ module Calc where
 
     instance Show Step where
         show (Step name exp) = "= {" ++ (show name) ++ "}\n" ++ (show exp) ++ "\n"
+
+    instance Show Calc where 
+        show (Calc _ steplist) = show steplist
+
+    -- this shows the correct expr or the error message
+    instance Show e => Show (Err e) where
+        show (Correct c) = show c
+        show (Error e) = e
