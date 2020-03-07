@@ -1,18 +1,30 @@
 module Calc where
     import Text.Megaparsec
-    import Text.Megaparsec.Char
     import Data.Void
 
     data Law = Law LawName Equation
-        deriving (Eq)
+        deriving (Eq, Show)
+    
+    type Laws = [Law]
     type LawName = String
     type Equation = (Expr, Expr)
     type Parser = Parsec Void String 
     type Subst = [(Expr, Expr)]
 
-    data Step = Step LawName Expr deriving Eq
-    data Calculation = Calculation Expr [Step]
+    data Err e = Correct e 
+            | Error String deriving (Eq)
 
+    data Step = Step LawName Expr deriving Eq
+    data Calc = Calc Expr [Step] deriving Eq
+
+    instance Show Calc where 
+        show (Calc _ steplist) = (concatMap (show) (steplist))
+
+    instance Show e => Show (Err e) where
+        show (Correct c) = show c
+        show (Error e) = e
+    -- instance Show Laws where
+    --    show laws = (concatMap (show) (laws))
     data BOp = Add 
           | Mult
           | Div 

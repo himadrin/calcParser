@@ -28,9 +28,9 @@ source-repository head
 library
   exposed-modules:
       Calc
+      Parser
       Implementation
       Output
-      Parser
   other-modules:
       Paths_calcParser_himadriali
   hs-source-dirs:
@@ -52,6 +52,8 @@ executable calcParser-himadriali-exe
   build-depends:
       base >=4.7 && <5
     , calcParser-himadriali
+    , megaparsec
+    , parser-combinators
   default-language: Haskell2010
 
 test-suite calcParser-himadriali-test
