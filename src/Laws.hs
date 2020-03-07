@@ -41,6 +41,9 @@ module Laws where
     law_exponent_add :: Law
     law_exponent_add = Law "adding exponents" (TwoOp Add (TwoOp Power (Var 'a') (Var 'b')) (TwoOp Power (Var 'a') (Var 'c')), TwoOp Power (Var 'a') (TwoOp Add (Var 'b') (Var 'c')))
     
+    law_exponent_one :: Law
+    law_exponent_one = Law "exponent of 1 is just var" (TwoOp Power (Var 'a') (Const 1), Var 'a')
+
     law_mult_zero :: Law
     law_mult_zero = Law "multiply by zero" (TwoOp Mult (Var 'a') (Const 0), Const 0)
 
@@ -72,4 +75,4 @@ module Laws where
     law_div_self = Law "divide a var by itself" (TwoOp Mult (Var 'x') (TwoOp Power (Var 'x') (OneOp Neg (Const 1))), Const 1)
     
     law_list :: [Law]
-    law_list = [law_div_self2, law_div_self, law_addition, law_cos, law_power, law_product, law_add_neg, law_sin, law_ln, law_self, law_deriv_const, law_deriv_const_neg, law_exponent1, law_exponent_add, law_mult_zero, law_mult_zero2, law_mult_one, law_mult_one2, law_add_zero, law_add_zero2, law_exponent_add_with_const]
+    law_list = [law_div_self2, law_div_self, law_addition, law_cos, law_power, law_product, law_add_neg, law_sin, law_ln, law_self, law_deriv_const, law_exponent_one, law_deriv_const_neg, law_exponent1, law_exponent_add, law_mult_zero, law_mult_zero2, law_mult_one, law_mult_one2, law_add_zero, law_add_zero2, law_exponent_add_with_const]

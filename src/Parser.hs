@@ -12,11 +12,6 @@ import Control.Monad.Combinators.Expr -- DOCUMENTATION: http://docs.restyled.io/
 import Control.Monad
 import qualified Text.Megaparsec.Char.Lexer as L
 
-{-parseExpr :: String -> Err Expr
-parseExpr s = case parse (pExpr <* eof) "<stdin>" s of 
-  Left err -> Error "something went wrong"
-  Right ex -> Correct ex-}
-
 -- Parsing
 -- lots of help from this: https://markkarpov.com/tutorial/megaparsec.html
 -- makes the parser using our opTable and pTerm
@@ -67,7 +62,7 @@ pTerm = (try $ do  {_ <- space;
                 _ <- space;
                 return (one)}) <|>
             (try $ do  {_ <- space;
-                d <- some alphaNumChar;
+                d <- some digitChar;
                 _ <- space;
                 return (Const (read d))}) <|>
             do  {_ <- space;
