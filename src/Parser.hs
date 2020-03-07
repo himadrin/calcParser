@@ -1,20 +1,16 @@
-module Parser (pExpr, parseExpr, parseLaw) where
+module Parser (pExpr, parseLaw) where
 --module Parser (pExpr, parseExpr) where
 
 -- Data Structures help from textbook and from inclass slides
 -- parsing help from https://jakewheat.github.io/intro_to_parsing/#getting-started
 import Calc
+import Laws
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import Data.Void
 import Control.Monad.Combinators.Expr -- DOCUMENTATION: http://docs.restyled.io/restyler/parser-combinators-1.1.0/Control-Monad-Combinators-Expr.html
 import Control.Monad
 import qualified Text.Megaparsec.Char.Lexer as L
-
-parseExpr :: String -> Err Expr
-parseExpr s = case parse (pExpr <* eof) "<stdin>" s of 
-  Left err -> Error "something went wrong"
-  Right ex -> Correct ex
 
 {-parseExpr :: String -> Err Expr
 parseExpr s = case parse (pExpr <* eof) "<stdin>" s of 

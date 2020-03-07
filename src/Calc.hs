@@ -10,8 +10,9 @@ module Calc where
     type Equation = (Expr, Expr)
     type Parser = Parsec Void String 
     type Subst = [(Expr, Expr)]
+    type Correct = Expr
 
-    data Err e = Correct e 
+    data Err e = Expr e 
             | Error String deriving (Eq)
 
     data Step = Step LawName Expr deriving Eq
@@ -41,11 +42,11 @@ module Calc where
 
     -- show instances https://stackoverflow.com/questions/12537120/making-a-data-type-an-instance-of-show-in-haskell
     instance Show BOp where
+        show Power = "^"
         show Add = " + "
+        show Subt = " - "
         show Mult = " * "
         show Div = " / "
-        show Subt = " - "
-        show Power = "^"
 
     instance Show UOp where
         show Sin = "sin "
@@ -66,9 +67,10 @@ module Calc where
         show (Step name exp) = "= {" ++ (show name) ++ "}\n" ++ (show exp) ++ "\n"
 
     instance Show Calc where 
-        show (Calc _ steplist) = show steplist
+        show (Calc _ steplist) = do
+            show steplist
 
     -- this shows the correct expr or the error message
     instance Show e => Show (Err e) where
-        show (Correct c) = show c
+        show (Expr e) = show e
         show (Error e) = e
