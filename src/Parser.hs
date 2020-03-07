@@ -1,39 +1,48 @@
-module Parser where
+module Parser (pExpr, parseExpr, parseLaw) where
+--module Parser (pExpr, parseExpr) where
 
 -- Data Structures help from textbook and from inclass slides
 -- parsing help from https://jakewheat.github.io/intro_to_parsing/#getting-started
-
+import Calc
 import Text.Megaparsec
 import Text.Megaparsec.Char
 import Data.Void
 import Control.Monad.Combinators.Expr -- DOCUMENTATION: http://docs.restyled.io/restyler/parser-combinators-1.1.0/Control-Monad-Combinators-Expr.html
+import Control.Monad
 import qualified Text.Megaparsec.Char.Lexer as L
 
-data BOp = Add 
-          | Mult
-          | Div 
-          | Subt
-          | Power
-          deriving Show
-data UOp = Sin 
-          | Cos
-          | Tan
-          | Ln 
-          | Neg 
-          | Pos 
-          deriving Show
-data Expr = TwoOp BOp Expr Expr
-            | OneOp UOp Expr
-            | Derive Expr Expr
-            | Var Char
-            | Const Char
-            deriving Show
+parseExpr :: String -> Err Expr
+parseExpr s = case parse (pExpr <* eof) "<stdin>" s of 
+  Left err -> Error "something went wrong"
+  Right ex -> Correct ex
 
-type Parser = Parsec Void String 
+{-parseExpr :: String -> Err Expr
+parseExpr s = case parse (pExpr <* eof) "<stdin>" s of 
+  Left err -> Error "something went wrong"
+  Right ex -> Correct ex-}
 
 -- Parsing
 -- lots of help from this: https://markkarpov.com/tutorial/megaparsec.html
 -- makes the parser using our opTable and pTerm
+
+upto :: Token [Char] -> Parser String
+upto c = (char c *> return []) <|> ((:) <$> anySingle <*> upto c)
+
+parseLaw :: String -> Law
+parseLaw s = case parse (pLaw <* eof) "<stdin>" s of 
+  Left _ -> Law "error law" (Const '0', Const '0')
+  Right law -> law
+
+pLaw :: Parser Law
+pLaw = do {
+        name <- upto ':' ; 
+        e1 <- pExpr;
+        _ <- space;
+        _ <- string "=";
+        _ <- space; 
+        e2 <- pExpr; 
+        return (Law name (e1,e2))}
+
 pExpr :: Parser Expr
 pExpr = makeExprParser pTerm operatorTable
 

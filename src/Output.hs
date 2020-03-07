@@ -1,4 +1,4 @@
-module Output where
+module Output(final) where
 
     -- import Parser as P
     import Calc
@@ -17,3 +17,8 @@ module Output where
                         [] -> []
                         (Step name exp):_ -> (Step name exp) : (stepList law_list exp)
                     where steps = [Step name new_exp | Law name (e1, e2) <- law_list, new_exp <- (rewrites e1 e2 expression)]
+
+    --handle expression and error
+    final :: [Law] -> Err Expr -> Err Calc
+    final law_list (Correct e) = Correct (Calc e (stepList law_list e))
+    final _ (Error string) = Error string
