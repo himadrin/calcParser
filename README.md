@@ -44,5 +44,5 @@ We want to export a module Calc which contains:
 You can find our github repo here: https://github.com/himadrin/calcParser
 
 
-### Question:
-Do we add the cabal file to our git repo even though it was automatically added to the .gitignore? 
+### Next Steps:
+We would love to get this working with a web UI - unfortunately we did not have the time to do so!

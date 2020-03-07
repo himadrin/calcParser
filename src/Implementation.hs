@@ -2,12 +2,6 @@
 module Implementation where
 
     import Calc
-    import Laws
-    import Text.Megaparsec
-    import Text.Megaparsec.Char
-    import Data.Void
-    import Control.Monad.Combinators.Expr
-    import qualified Text.Megaparsec.Char.Lexer as L
     import System.IO()
     import Prelude hiding (exp)
 
@@ -59,8 +53,6 @@ module Implementation where
     matchFunc (Var v) expr@(Const _) = [[(Var v, expr)]]
     matchFunc (Var v) expr | v /= 'p' && v /= 'q' = [[(Var v, expr)]] -- TODO: document in readme that p and q are special
     --write for constants p and q are constants in our laws
-    matchFunc (Var 'p') (Const c) = [[((Var 'p'), (Const c))]]
-    matchFunc (Var 'q') (Const c) = [[((Var 'q'), (Const c))]]
     matchFunc (Const i) (Const j) | i == j = [[]]
     matchFunc _ _ = []
 
@@ -69,7 +61,10 @@ module Implementation where
     compatible sub1 sub2 = and [e1 == e2 | (v1, e1) <- sub1, (v2, e2) <-sub2, v1==v2]
 
     --test exprs
+    sub :: Subst
     sub = [((Var 'x'),(Const 3)), ((Var 'y'),(Const 4))]
+
+    exp :: Expr
     exp = (TwoOp Add (Var 'x')(Var 'y'))
 
     -- applies substitutions to expressions
@@ -82,24 +77,29 @@ module Implementation where
     apply _ (Const c) = (Const c)
 
     --test exprs
-    e1 = Derive (Var 'x') (TwoOp Add (Var 'a') (Var 'b'))
-    e2 = TwoOp Add (Derive (Var 'x') (Var 'a')) (Derive (Var 'x') (Var 'b'))
-    e3 = Derive (Var 'x') (TwoOp Add (Var 'x') (Const 3))
+    expr1 :: Expr
+    expr1 = Derive (Var 'x') (TwoOp Add (Var 'a') (Var 'b'))
+
+    expr2:: Expr
+    expr2 = TwoOp Add (Derive (Var 'x') (Var 'a')) (Derive (Var 'x') (Var 'b'))
+
+    expr3:: Expr
+    expr3 = Derive (Var 'x') (TwoOp Add (Var 'x') (Const 3))
 
     --recombines expression
     rewrites :: Expr -> Expr -> Expr -> [Expr]
-    rewrites e1 e2 expression
-        = helperRW e1 e2 expression ++
+    rewrites exp1 exp2 expression
+        = helperRW exp1 exp2 expression ++
             case expression of
-                (Derive v expr) -> [Derive v new_exp | new_exp <- rewrites e1 e2 expr]
-                (TwoOp bop l r) -> [TwoOp bop new_expL r | new_expL <- rewrites e1 e2 l] 
-                                        ++ [TwoOp bop l new_expR | new_expR <- rewrites e1 e2 r]
-                (OneOp uop expr) -> [OneOp uop new_exp | new_exp <- rewrites e1 e2 expr]
+                (Derive v expr) -> [Derive v new_exp | new_exp <- rewrites exp1 exp2 expr]
+                (TwoOp bop l r) -> [TwoOp bop new_expL r | new_expL <- rewrites exp1 exp2 l] 
+                                        ++ [TwoOp bop l new_expR | new_expR <- rewrites exp1 exp2 r]
+                (OneOp uop expr) -> [OneOp uop new_exp | new_exp <- rewrites exp1 exp2 expr]
                 _ -> []
 
     --helper func for rewriting
     helperRW :: Expr -> Expr -> Expr -> [Expr]
-    helperRW e1 e2 exp = [apply substitution e2 | substitution <- matchFunc e1 exp]
+    helperRW e1 e2 expr = [apply substitution e2 | substitution <- matchFunc e1 expr]
 
     -- extra feature : simplify math if constants are being operated on
     doMath :: Expr -> Expr
@@ -110,4 +110,4 @@ module Implementation where
 
     -- gives you the mathematic operator 
     helper :: BOp -> (Int -> Int -> Int)
-    helper bop | bop == Power = (^) | bop == Add = (+) | bop == Subt = (-) | bop == Mult = (*) | bop == Div = div
+    helper bop | bop == Power = (^) | bop == Add = (+) | bop == Subt = (-) | bop == Mult = (*) | bop == Div = div | otherwise = (+)

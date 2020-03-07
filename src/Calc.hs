@@ -1,4 +1,5 @@
 module Calc where
+    import Prelude hiding (exp)
     import Text.Megaparsec
     import Data.Void
 

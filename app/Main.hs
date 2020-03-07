@@ -2,14 +2,10 @@ module Main where
 
 import Calc
 import Parser
-import Laws
 import Output
-import Implementation
-import Control.Monad     (unless)
 import System.IO
 import Text.Megaparsec
-import Control.Monad.Combinators.Expr
-import Data.Foldable
+--import Data.Foldable
 
 --https://blogg.bekk.no/creating-a-repl-in-haskell-efcdef1deec2
 --https://wiki.haskell.org/Tutorials/Programming_Haskell/String_IO
@@ -32,7 +28,7 @@ printLaws laws = putStrLn (show laws)
 -- helper to handle parse result with Err and Expr
 parseExpr :: String -> Err Expr
 parseExpr s = case parse (pExpr <* eof) "<stdin>" s of 
-  Left err -> Error "You entered your expression incorrectly. Check the readme for proper syntax!"
+  Left _ -> Error "You entered your expression incorrectly. Check the readme for proper syntax!"
   Right ex -> Expr ex
 
 
