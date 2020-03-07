@@ -12,52 +12,42 @@ import Control.Monad.Combinators.Expr
 import Data.Foldable
 
 --https://blogg.bekk.no/creating-a-repl-in-haskell-efcdef1deec2
+--https://wiki.haskell.org/Tutorials/Programming_Haskell/String_IO
 
+-- prompts user and takes in their response input
 promptLine :: String -> IO String
 promptLine prompt
  =do
     putStr prompt
     hFlush stdout
     getLine
-{-
-parseExpr :: Parser Calc.Expr 
-parseExpr = do {
-                expr <- pExpr;
-                _ <- space;
-                return (Expr expr)}
--}
 
+-- prints steplist correctly
 doPrint :: Err [Step] -> IO()
 doPrint calc = putStrLn (show calc)
 
 printLaws :: Laws -> IO()
 printLaws laws = putStrLn (show laws)
 
+-- helper to handle parse result with Err and Expr
 parseExpr :: String -> Err Expr
 parseExpr s = case parse (pExpr <* eof) "<stdin>" s of 
-  Left err -> Error "something went wrong"
+  Left err -> Error "You entered your expression incorrectly. Check the readme for proper syntax!"
   Right ex -> Expr ex
 
 
 main :: IO ()
 main = do
-    --laws <- promptLine "File for laws: "
+    -- get string content from our law file
     fileContent <- readFile "src/Laws.txt"
+    -- separate content by each line into list of laws
     let lawslist = lines fileContent
-    --forM_ lawslist parseLaw
-    -- forM_ lawslist putStrLn
-    -- let lawsl = map parseLaw lawslist
-   
-    -- forM_ lawsl printLaws
-
     let lawsl = map parseLaw lawslist
+    -- uncomment below to view parsed laws
     -- printLaws lawsl
-    --forM_ lawsl (putStrLn show)
-    --putStrLn(show lawsl)
     expression <- promptLine "Expression to derive: "
-    --expression <- Parser.pExpr
     let expr = parseExpr expression
-    --putStrLn("hi" ++ (show expr))
+    -- call final from Output to get steps
     let result = final lawsl expr
     doPrint(result)
     

@@ -7,15 +7,19 @@ module Calc where
     
     type Laws = [Law]
     type LawName = String
+
+    --comma seperates left and right side of equation
     type Equation = (Expr, Expr)
     type Parser = Parsec Void String 
     type Subst = [(Expr, Expr)]
 
+    --needed for parse
     data Err e = Expr e 
             | Error String deriving (Eq)
 
     data Step = Step LawName Expr deriving Eq
 
+    --defines operators
     data BOp = Add 
           | Mult
           | Div 
@@ -29,6 +33,8 @@ module Calc where
           | Neg 
           | Pos 
           deriving (Eq)
+
+    --puts expressions together with type and operator
     data Expr = TwoOp BOp Expr Expr
           | OneOp UOp Expr
           | Derive Expr Expr
@@ -59,6 +65,7 @@ module Calc where
         show (Var c) = [c]
         show (Const i) = show i
 
+    --used formatting from pretty printing proofs
     instance Show Step where
         show (Step name exp) = "= {" ++ (show name) ++ "}\n" ++ (show exp) ++ "\n"
 
