@@ -3,6 +3,7 @@ module Output where
     -- import Parser as P
     import Calc
     import Implementation
+    import Laws
     import Text.Megaparsec
     import Text.Megaparsec.Char
     import Data.Void
@@ -21,5 +22,5 @@ module Output where
 
     --handle expression and error
     final :: [Law] -> Err Expr -> Err Calc
-    final law_list (Correct e) = Correct (Calc e (stepList law_list e))
+    final law_list (Expr e) = Expr (Calc e (stepList law_list e))
     final _ (Error string) = Error string

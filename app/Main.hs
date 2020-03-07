@@ -2,6 +2,7 @@ module Main where
 
 import Calc
 import Parser
+import Laws
 import Output
 import Implementation
 import Control.Monad     (unless)
@@ -32,6 +33,12 @@ doPrint calc = putStrLn (show calc)
 -- printLaws :: Laws -> IO()
 -- printLaws laws = putStrLn show laws
 
+parseExpr :: String -> Err Expr
+parseExpr s = case parse (pExpr <* eof) "<stdin>" s of 
+  Left err -> Error "something went wrong"
+  Right ex -> Expr ex
+
+
 main :: IO ()
 main = do
     --laws <- promptLine "File for laws: "
@@ -49,6 +56,7 @@ main = do
     expression <- promptLine "Expression to derive: "
     --expression <- Parser.pExpr
     let expr = parseExpr expression
+    --putStrLn("hi" ++ (show expr))
     let result = final law_list expr
     doPrint(result)
     
