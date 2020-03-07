@@ -47,5 +47,5 @@ main = do
     --expression <- Parser.pExpr
     let expr = parseExpr expression
     let result = final law_list expr
-    doPrint (result)
+    doPrint (final law_list expr)
     

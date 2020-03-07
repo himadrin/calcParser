@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
-module Implementation (law_list, rewrites) where
+module Implementation where
 
     -- import Parser as P
     import Calc
@@ -42,7 +42,6 @@ module Implementation (law_list, rewrites) where
     test7 :: Expr
     test7 = (Derive (Var 'x') (TwoOp Div (Var 'x')(Var 'x')))
 
-
 -- **COULD NOT GET READFILE TO WORK**
     --getlaws :: [String]
     -- getlaws = do {
@@ -59,8 +58,21 @@ module Implementation (law_list, rewrites) where
     law_ln = Law "law_ln" (Derive (Var 'x') (OneOp Ln (Var 'a')),TwoOp Mult (TwoOp Div (Const '1') (Var 'a')) (Derive (Var 'x') (Var 'a')))
     law_power = Law "law_power" (Derive (Var 'x') (TwoOp Power (Var 'a') (Var 'b')),TwoOp Mult (TwoOp Power (Var 'a') (Var 'b')) (Derive (Var 'x') (TwoOp Mult (Var 'b') (OneOp Ln (Var 'a')))))
     law_self = Law "law_self" (Derive (Var 'x') (Var 'x'),Const '1')
-    law_power_const = Law "law_power_const" (Derive (Var 'x') (TwoOp Power (Var 'q') (Const 'p')), TwoOp Mult (Const 'p') (TwoOp Power (Var 'q') (TwoOp Subt (Const 'p')(Const '1'))))
-    law_list = [law_addition, law_power_const, law_cos, law_power, law_product, law_sin, law_ln, law_self]
+    --law_power_const = Law "law_power_const" (Derive (Var 'x') (TwoOp Power (Var 'a') (Var 'p')), TwoOp Mult (Var 'p') (TwoOp Power (Var 'a') (TwoOp Subt (Var 'p')(Const '1'))))
+    law_deriv_const = Law "law: derivative of a const" (Derive (Var 'x') (Var 'p'), Const '0')
+    law_deriv_const_neg = Law "law: derivative of a const" (Derive (Var 'x') (OneOp Neg (Var 'p')), Const '0')
+    law_exponent1 = Law "convert fraction to exponent" (TwoOp Div (Var 'a') (Var 'b'), TwoOp Mult (Var 'a')(TwoOp Power (Var 'b') (OneOp Neg (Const '1'))))
+    law_exponent_add = Law "adding exponents" (TwoOp Add (TwoOp Power (Var 'a') (Var 'b')) (TwoOp Power (Var 'a') (Var 'c')), TwoOp Power (Var 'a') (TwoOp Add (Var 'b') (Var 'c')))
+    law_mult_zero = Law "multiply by zero" (TwoOp Mult (Var 'a') (Const '0'), Const '0')
+    law_mult_zero2 = Law "multiply by zero" (TwoOp Mult (Const '0') (Var 'a'), Const '0')
+    law_mult_one = Law "multiply by one" (TwoOp Mult (Var 'a') (Const '1'), Var 'a')
+    law_mult_one2 = Law "multiply by one" (TwoOp Mult (Const '1') (Var 'a'), Var 'a')
+    law_add_zero = Law "add zero" (TwoOp Add (Const '0') (Var 'a'), Var 'a')
+    law_add_zero2 = Law "add zero" (TwoOp Add (Var 'a') (Const '0'), Var 'a')
+    law_exponent_add_with_const = Law "extract constant during exponent add" (TwoOp Mult (TwoOp Power (Var 'a') (Var 'b')) (TwoOp Mult (Var 'p') (TwoOp Power (Var 'a') (Var 'c'))), TwoOp Mult (Var 'p') (TwoOp Power (Var 'a') (TwoOp Add (Var 'b') (Var 'c'))))
+    law_div_self2 = Law "divide a var by itself" (TwoOp Div (Var 'x') (Var 'x'), Const '1')
+    law_div_self = Law "divide a var by itself" (TwoOp Mult (Var 'x') (TwoOp Power (Var 'x') (OneOp Neg (Const '1'))), Const '1')
+    law_list = [law_div_self2, law_div_self, law_addition, law_cos, law_power, law_product, law_sin, law_ln, law_self, law_deriv_const, law_deriv_const_neg, law_exponent1, law_exponent_add, law_mult_zero, law_mult_zero2, law_mult_one, law_mult_one2, law_add_zero, law_add_zero2, law_exponent_add_with_const]
 
     --matches expressions to come up with a list of substitutions
     matchFunc :: Expr -> Expr -> [Subst]
@@ -71,6 +83,7 @@ module Implementation (law_list, rewrites) where
     matchFunc (Var v) expr@(Const _) = [[(Var v, expr)]]
     matchFunc (Var v) expr | v /= 'p' && v /= 'q' = [[(Var v, expr)]] -- TODO: document in readme that p and q are special
     --write for constants
+    matchFunc (Var 'p') (Const c) = [[((Var 'p'), (Const c))]]
     matchFunc (Const i) (Const j) | i == j = [[]]
     matchFunc _ _ = []
 
