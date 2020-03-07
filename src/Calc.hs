@@ -10,16 +10,12 @@ module Calc where
     type Equation = (Expr, Expr)
     type Parser = Parsec Void String 
     type Subst = [(Expr, Expr)]
-    type Correct = Expr
 
     data Err e = Expr e 
             | Error String deriving (Eq)
 
     data Step = Step LawName Expr deriving Eq
-    data Calc = Calc Expr [Step] deriving Eq
 
-    -- instance Show Laws where
-    --    show laws = (concatMap (show) (laws))
     data BOp = Add 
           | Mult
           | Div 
@@ -65,10 +61,6 @@ module Calc where
 
     instance Show Step where
         show (Step name exp) = "= {" ++ (show name) ++ "}\n" ++ (show exp) ++ "\n"
-
-    instance Show Calc where 
-        show (Calc _ steplist) = do
-            show steplist
 
     -- this shows the correct expr or the error message
     instance Show e => Show (Err e) where

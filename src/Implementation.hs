@@ -1,7 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 module Implementation where
 
-    -- import Parser as P
     import Calc
     import Laws
     import Text.Megaparsec
@@ -11,6 +10,8 @@ module Implementation where
     import qualified Text.Megaparsec.Char.Lexer as L
     import System.IO()
     import Prelude hiding (exp)
+
+    --lots of help from book and slides and prof. joosten! (thanks you're the best)
 
     --test expressions! need more
     test1 :: Expr
@@ -48,15 +49,6 @@ module Implementation where
 
     test7 :: Expr
     test7 = (Derive (Var 'x') (TwoOp Div (Var 'x')(Var 'x')))
-
--- **COULD NOT GET READFILE TO WORK**
-    --getlaws :: [String]
-    -- getlaws = do {
-        -- lawstext <- liftM lines (readFile "src/laws/Laws.txt");
-        --let list = lines lawstext; 
-        -- return lawstext}
-
-        -- TODO: PARSE LAWS! (rip)
  
     --matches expressions to come up with a list of substitutions
     matchFunc :: Expr -> Expr -> [Subst]
@@ -66,17 +58,17 @@ module Implementation where
     matchFunc (OneOp op1 exprL) (OneOp op2 exprE) | op1 == op2 = matchFunc exprL exprE | otherwise = []
     matchFunc (Var v) expr@(Const _) = [[(Var v, expr)]]
     matchFunc (Var v) expr | v /= 'p' && v /= 'q' = [[(Var v, expr)]] -- TODO: document in readme that p and q are special
-    --write for constants
+    --write for constants p and q are constants in our laws
     matchFunc (Var 'p') (Const c) = [[((Var 'p'), (Const c))]]
-    matchFunc (Var 'q') (Const c) = [[((Var 'p'), (Const c))]]
+    matchFunc (Var 'q') (Const c) = [[((Var 'q'), (Const c))]]
     matchFunc (Const i) (Const j) | i == j = [[]]
     matchFunc _ _ = []
 
-    --TO DO: WRITE THIS FUNC! 
+    -- checks if two substritutions are compqtible and returns true or false
     compatible :: Subst -> Subst -> Bool
     compatible sub1 sub2 = and [e1 == e2 | (v1, e1) <- sub1, (v2, e2) <-sub2, v1==v2]
 
-
+    --test exprs
     sub = [((Var 'x'),(Const 3)), ((Var 'y'),(Const 4))]
     exp = (TwoOp Add (Var 'x')(Var 'y'))
 
@@ -88,12 +80,13 @@ module Implementation where
     apply ((var,expr): substitution) (Var v) | var == (Var v) = expr | otherwise = apply substitution (Var v)
     apply [] (Var v) = (Var v)
     apply _ (Const c) = (Const c)
-    --recombines expression
 
+    --test exprs
     e1 = Derive (Var 'x') (TwoOp Add (Var 'a') (Var 'b'))
     e2 = TwoOp Add (Derive (Var 'x') (Var 'a')) (Derive (Var 'x') (Var 'b'))
     e3 = Derive (Var 'x') (TwoOp Add (Var 'x') (Const 3))
 
+    --recombines expression
     rewrites :: Expr -> Expr -> Expr -> [Expr]
     rewrites e1 e2 expression
         = helperRW e1 e2 expression ++
@@ -104,11 +97,11 @@ module Implementation where
                 (OneOp uop expr) -> [OneOp uop new_exp | new_exp <- rewrites e1 e2 expr]
                 _ -> []
 
-
+    --helper func for rewriting
     helperRW :: Expr -> Expr -> Expr -> [Expr]
     helperRW e1 e2 exp = [apply substitution e2 | substitution <- matchFunc e1 exp]
 
-    -- extra feature : simplify math
+    -- extra feature : simplify math if constants are being operated on
     doMath :: Expr -> Expr
     doMath (Derive v expr) = Derive v (doMath expr)
     doMath (TwoOp bop (Const c1) (Const c2)) = Const((helper bop) c1 c2)

@@ -27,11 +27,11 @@ parseExpr = do {
                 return (Expr expr)}
 -}
 
-doPrint :: Err Calc -> IO()
+doPrint :: Err [Step] -> IO()
 doPrint calc = putStrLn (show calc)
 
--- printLaws :: Laws -> IO()
--- printLaws laws = putStrLn show laws
+printLaws :: Laws -> IO()
+printLaws laws = putStrLn (show laws)
 
 parseExpr :: String -> Err Expr
 parseExpr s = case parse (pExpr <* eof) "<stdin>" s of 
@@ -42,21 +42,22 @@ parseExpr s = case parse (pExpr <* eof) "<stdin>" s of
 main :: IO ()
 main = do
     --laws <- promptLine "File for laws: "
-    -- fileContent <- readFile "src/Laws.txt"
-    -- let lawslist = lines fileContent
+    fileContent <- readFile "src/Laws.txt"
+    let lawslist = lines fileContent
     --forM_ lawslist parseLaw
     -- forM_ lawslist putStrLn
     -- let lawsl = map parseLaw lawslist
-    -- printLaws lawsl
+   
     -- forM_ lawsl printLaws
 
-    --let lawsl = (concat . (map parseLaw)) lawslist
-    --forM_ lawsl putStrLn
+    let lawsl = map parseLaw lawslist
+    -- printLaws lawsl
+    --forM_ lawsl (putStrLn show)
     --putStrLn(show lawsl)
     expression <- promptLine "Expression to derive: "
     --expression <- Parser.pExpr
     let expr = parseExpr expression
     --putStrLn("hi" ++ (show expr))
-    let result = final law_list expr
+    let result = final lawsl expr
     doPrint(result)
     
