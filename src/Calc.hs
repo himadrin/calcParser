@@ -66,8 +66,9 @@ module Calc where
         show (Step name exp) = "= {" ++ (show name) ++ "}\n" ++ (show exp) ++ "\n"
 
     instance Show Calc where 
-        show (Calc _ steplist) = (concatMap (show) (steplist))
+        show (Calc _ steplist) = show steplist
 
+    -- this shows the correct expr or the error message
     instance Show e => Show (Err e) where
         show (Correct c) = show c
         show (Error e) = e
