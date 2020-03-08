@@ -28,6 +28,8 @@ You may view the results of our test instances we made with the command:
 stack test
 ```
 
+### Input:
+
 When running the program your input should be in the format derive(variable you are deriving in terms of, expression) for example:
 ```
 derive(x, x^2)
