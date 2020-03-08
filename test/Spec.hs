@@ -36,15 +36,22 @@ expr5 = Derive (Var 'x') (TwoOp Add (TwoOp Add (TwoOp Div (Var 'x') (Const 2)) (
 step5 :: Step
 step5 = Step "add zero" (TwoOp Add (TwoOp Power (Const 2) (OneOp Neg (Const 1))) (Const 2))
 
--- x^2
+-- 3x + 2x
 expr6 :: Expr
 expr6 = (Derive (Var 'x') (TwoOp Add (TwoOp Mult (Const 3) (Var 'x')) (TwoOp Mult (Const 2) (Var 'x'))))
--- step6 :: Step
--- step6 = Step "adding a negative" (TwoOp Mult (Const 3) (TwoOp Power (Var 'x') (Const 2)))
+step6 :: Step
+step6 = Step "multiply by zero" (Const 5)
+
+-- x^(2+3)
+expr7 :: Expr
+expr7 = (Derive (Var 'x') (TwoOp Power (Var 'x') (TwoOp Add (Const 2) (Const 3))))
+step7 :: Step -- first step
+step7 = Step "law_power" (TwoOp Mult (TwoOp Power (Var 'x') (Const 5)) (Derive (Var 'x') (TwoOp Mult (Const 5) (OneOp Ln (Var 'x')))))
+
 
 main :: IO ()
-main = defaultMain (testGroup "derivatives" [test1, test2, test3, test4, test5])
-test1, test2, test3, test4, test5 :: TestTree
+main = defaultMain (testGroup "derivatives" [test1, test2, test3, test4, test5, test6, test7])
+test1, test2, test3, test4, test5, test6, test7 :: TestTree
 
 test1 = testCase "derivative of x^3" $
     assertBool "is 3 * x" $ ((last(stepList law_list expr1))==step1)
@@ -60,3 +67,9 @@ test4 = testCase "derivative of x^(4 + 2x +3)" $
 
 test5 = testCase "derivative of (x/2) + (2*x) + 3" $
     assertBool "is 2 + 1/2" $ ((last(stepList law_list expr5))==step5)
+
+test6 = testCase "derivative of 3x + 2x" $
+    assertBool "is 5" $ ((last(stepList law_list expr6))==step6)
+
+test7 = testCase "derivative of x^(2+3)" $
+    assertBool "the first step adds 2 and 3" $ ((head(stepList law_list expr7))==step7)

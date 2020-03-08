@@ -78,7 +78,7 @@ We have created a calculus solver with the following modules:
 You can find our github repo here: https://github.com/himadrin/calcParser
 
 ### Extra Functionality
-The function simplify in Output.hs allows our app to add constants when they are left in the final solution step. You can see this in test case 6.
+The function simplify in Output.hs allows our app to add constants when they are left in the final solution step. You can see this in test case 6 where the derivative of 3x + 2x is 5 and in test case 7 the derivative of x^(2+3) adds them to get x^5 in the first step and then the correct final answer.
 
 ### Contributors:
 Winter 2020: Himadri Narasimhamurthy, Ali Hagen, assistance from Prof. Joosten and from the textbook Thinking Functionally With Haskell.
