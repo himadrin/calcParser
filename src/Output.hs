@@ -14,7 +14,24 @@ module Output where
 
                     -- recursively calls rewrites and doMath on expr for each step
                     where steps = [Step name new_exp | Law name (e1, e2) <- laws_list, 
-                                                        new_exp <- (map doMath (rewrites e1 e2 expression))]
+                                                        new_exp <- (map math(rewrites e1 e2 expression))]
+
+    -- to recursively call simplify until we get simplified exp
+    math :: Expr -> Expr
+    math exp = 
+        if exp == (simplify exp) then exp
+        else math (simplify exp)
+
+    -- extra feature : simplify math if constants are being operated on
+    simplify :: Expr -> Expr
+    simplify (TwoOp Power (Const c1) (Const c2)) = Const((^) c1 c2)
+    simplify (TwoOp Add (Const c1) (Const c2)) = Const((+) c1 c2)
+    simplify (TwoOp Subt (Const c1) (Const c2)) = Const((-) c1 c2)
+    simplify (TwoOp Mult (Const c1) (Const c2)) = Const((*) c1 c2)
+    simplify (TwoOp Div (Const c1) (Const c2)) = Const((div) c1 c2)
+    simplify (Derive v expr) = Derive v (simplify expr)
+    simplify (TwoOp bop l r) = TwoOp bop (simplify l) (simplify r)
+    simplify expr = expr
 
     --called in main to handle expression and error from parse - takes in laws and expr
     final :: [Law] -> Err Expr -> Err [Step]
