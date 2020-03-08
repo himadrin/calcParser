@@ -32,18 +32,6 @@ module Implementation where
     apply [] (Var v) = (Var v)
     apply _ (Const c) = (Const c)
 
-    --test exprs 
-    {-
-    expr1 :: Expr
-    expr1 = Derive (Var 'x') (TwoOp Add (Var 'a') (Var 'b'))
-
-    expr2:: Expr
-    expr2 = TwoOp Add (Derive (Var 'x') (Var 'a')) (Derive (Var 'x') (Var 'b'))
-
-    expr3:: Expr
-    expr3 = Derive (Var 'x') (TwoOp Add (Var 'x') (Const 3))
-    -}
-
     --recombines expression
     rewrites :: Expr -> Expr -> Expr -> [Expr]
     rewrites exp1 exp2 expression

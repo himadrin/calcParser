@@ -23,6 +23,20 @@ Alternatively to run the program - you can also type the command:
 stack run
 ```
 
+You may view the results of our test instances we made with the command:
+```
+stack test
+```
+
+When running the program your input should be in the format derive(variable you are deriving in terms of, expression) for example:
+```
+derive(x, x^2)
+```
+You must use parenthesis around functions to control what is considered input such as:
+```
+derive(x, (x^2) + (2*x) + 3)
+```
+
 ### Implementation:
 
 We have created a calculus solver with the following modules: 
@@ -35,16 +49,22 @@ We have created a calculus solver with the following modules:
     
     * We also implemented simple math in the case that two constants are separated by a binary operator. It should then do the math on the constants.
 
+    * We have use a special for p and q in our law handling in order to take care of constants
+
  * Output.hs - stepList calls rewrites and doMath recursively until we can no longer rewrite the function applying the laws in order to create a list of Steps associated with a law name. The last function final is used in main to handle the error from using parse from megaParsec.
 
  * Laws.hs - includes our parsed list of laws - not necessary for running the code but could be useful for testing.
 
+ * Laws.txt - this file includes all our laws for taking derivatives which is parsed and used in the main
+
  * Main.hs - First it takes in our law list, parses it, and creates a list of Law objects. Then it takes in an expression from stdin and parses it and then calls final on the parsed expression and prints it for the user!
 
- * We have used several libraries and tutorials which we cite in comments
+ * We have used several libraries and tutorials which we cite in comments- including Megaparsec
 
 You can find our github repo here: https://github.com/himadrin/calcParser
 
+### Extra Functionality
+The function doMath in Implementation.hs allows our app to add constants when they are left in the final solution step. You can see this in test case 6.
 
 ### Contributors:
 Winter 2020: Himadri Narasimhamurthy, Ali Hagen, assistance from Prof. Joosten and from the textbook Thinking Functionally With Haskell.
