@@ -37,6 +37,18 @@ You must use parenthesis around functions to control what is considered input su
 derive(x, (x^2) + (2*x) + 3)
 ```
 
+To see the reults of just our Expression parser you can first run :
+```
+stack ghci
+```
+And then 'parseTest pExpr "expression"' such as these:
+```
+parseTest pExpr "derive(x, sin(x) + (x^2))"
+```
+```
+parseTest pExpr "(x^4) + (2 * (x^2)) + 7"
+```
+
 ### Implementation:
 
 We have created a calculus solver with the following modules: 

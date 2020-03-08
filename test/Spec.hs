@@ -6,7 +6,7 @@ import Calc
 import Implementation
 import Parser
 
---test expressions! need more
+--test expressions
 
 -- x^2
 expr1 :: Expr
@@ -36,9 +36,16 @@ expr5 = Derive (Var 'x') (TwoOp Add (TwoOp Add (TwoOp Div (Var 'x') (Const 2)) (
 step5 :: Step
 step5 = Step "add zero" (TwoOp Add (TwoOp Power (Const 2) (OneOp Neg (Const 1))) (Const 2))
 
+-- x^2
+expr6 :: Expr
+expr6 = (Derive (Var 'x') (TwoOp Add (TwoOp Mult (Const 3) (Var 'x')) (TwoOp Mult (Const 2) (Var 'x'))))
+-- step6 :: Step
+-- step6 = Step "adding a negative" (TwoOp Mult (Const 3) (TwoOp Power (Var 'x') (Const 2)))
+
 main :: IO ()
 main = defaultMain (testGroup "derivatives" [test1, test2, test3, test4, test5])
 test1, test2, test3, test4, test5 :: TestTree
+
 test1 = testCase "derivative of x^3" $
     assertBool "is 3 * x" $ ((last(stepList law_list expr1))==step1)
 
