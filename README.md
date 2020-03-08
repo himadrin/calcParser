@@ -46,12 +46,12 @@ We have created a calculus solver with the following modules:
  * Parser.hs - contains our parser to take in a string and return expressions. We also include a parser for laws which are written in Laws.txt and read in at the Main.
     
  * Implementation.hs - contains our matchFunc, our apply function, and rewrites. Here is where we match expressions to laws in order to perform the derivation. 
-    
-    * We also implemented simple math in the case that two constants are separated by a binary operator. It should then do the math on the constants.
 
     * We have use a special for p and q in our law handling in order to take care of constants
 
  * Output.hs - stepList calls rewrites and doMath recursively until we can no longer rewrite the function applying the laws in order to create a list of Steps associated with a law name. The last function final is used in main to handle the error from using parse from megaParsec.
+  
+    * We also implemented simple math in the case that two constants are separated by a binary operator. It should then do the math on the constants.
 
  * Laws.hs - includes our parsed list of laws - not necessary for running the code but could be useful for testing.
 
@@ -64,7 +64,7 @@ We have created a calculus solver with the following modules:
 You can find our github repo here: https://github.com/himadrin/calcParser
 
 ### Extra Functionality
-The function doMath in Implementation.hs allows our app to add constants when they are left in the final solution step. You can see this in test case 6.
+The function simplify in Output.hs allows our app to add constants when they are left in the final solution step. You can see this in test case 6.
 
 ### Contributors:
 Winter 2020: Himadri Narasimhamurthy, Ali Hagen, assistance from Prof. Joosten and from the textbook Thinking Functionally With Haskell.
