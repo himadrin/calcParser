@@ -67,7 +67,7 @@ module Calc where
         show (Const i) = show i
   --used formatting from pretty printing proofs
     instance Show Step where
-        show (Step name exp) = "= {" ++ (show name) ++ "}\n" ++ (show exp) ++ "\n"
+        show (Step name exp) = "= " ++ (show name) ++ " \n" ++ (show exp) ++ "\n"
 
     -- this shows the correct expr or the error message
     instance Show e => Show (Err e) where

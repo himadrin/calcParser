@@ -3,8 +3,6 @@ import Test.Tasty.HUnit
 import Output
 import Laws
 import Calc
-import Implementation
-import Parser
 
 --test expressions
 
