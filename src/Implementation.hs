@@ -46,14 +46,3 @@ module Implementation where
     --helper func for rewriting
     helperRW :: Expr -> Expr -> Expr -> [Expr]
     helperRW e1 e2 expr = [apply substitution e2 | substitution <- matchFunc e1 expr]
-
-    -- extra feature : simplify math if constants are being operated on
-    doMath :: Expr -> Expr
-    doMath (Derive v expr) = Derive v (doMath expr)
-    doMath (TwoOp bop (Const c1) (Const c2)) = Const((helper bop) c1 c2)
-    doMath (TwoOp bop l r) = TwoOp bop (doMath l) (doMath r)
-    doMath expr = expr
-
-    -- gives you the mathematic operator 
-    helper :: BOp -> (Int -> Int -> Int)
-    helper bop | bop == Power = (^) | bop == Add = (+) | bop == Subt = (-) | bop == Mult = (*) | bop == Div = div | otherwise = (+)
