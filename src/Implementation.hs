@@ -6,43 +6,6 @@ module Implementation where
     import Prelude hiding (exp)
 
     --lots of help from book and slides and prof. joosten! (thanks you're the best)
-
-    --test expressions! need more
-    test1 :: Expr
-    test1 = (Derive (Var 'x') (TwoOp Power (Var 'x') (Const 3)))
-
-    test10 :: Expr
-    test10 = Derive (Var 'x') (TwoOp Add (TwoOp Add (TwoOp Mult (Const 3) (Var 'x')) (TwoOp Power (Var 'x') (Const 2))) (TwoOp Mult (Const 2) (Var 'x')))
-
-    test11 :: Expr
-    test11 = Derive (Var 'x') (TwoOp Power (Var 'x') (TwoOp Add (Const 2) (Const 3)))
-
-    e4 :: Expr
-    e4 = Derive (Var 'x') (TwoOp Power (Var 'q') (Var 'p'))
-
-    e5 :: Expr
-    e5 = TwoOp Mult (Var 'p') (TwoOp Power (Var 'q') (TwoOp Subt (Var 'p')(Const 1)))
-
-    test8 :: Expr
-    test8 = (Derive (Var 'x') (TwoOp Power (Var 'x') (Var 'y')))
-
-    test2 :: Expr
-    test2 = (Derive (Var 'x') (TwoOp Mult (Var 'a') (Var 'b')))
-
-    test3 :: Expr
-    test3 = (Var 'x')
-
-    test4 :: Expr
-    test4 = (Var 'y')
-
-    test5 :: Subst
-    test5 = [(Var 'x',Var 'x'),(Var 'a',Const 2),(Var 'b',OneOp Ln (Var 'x'))]
-
-    test6 :: Expr
-    test6 = (Derive (Var 'x') (TwoOp Mult (Var 'x')(Var 'y')))
-
-    test7 :: Expr
-    test7 = (Derive (Var 'x') (TwoOp Div (Var 'x')(Var 'x')))
  
     --matches expressions to come up with a list of substitutions
     matchFunc :: Expr -> Expr -> [Subst]
@@ -76,7 +39,8 @@ module Implementation where
     apply [] (Var v) = (Var v)
     apply _ (Const c) = (Const c)
 
-    --test exprs
+    --test exprs 
+    {-
     expr1 :: Expr
     expr1 = Derive (Var 'x') (TwoOp Add (Var 'a') (Var 'b'))
 
@@ -85,6 +49,7 @@ module Implementation where
 
     expr3:: Expr
     expr3 = Derive (Var 'x') (TwoOp Add (Var 'x') (Const 3))
+    -}
 
     --recombines expression
     rewrites :: Expr -> Expr -> Expr -> [Expr]
