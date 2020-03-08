@@ -60,13 +60,6 @@ module Implementation where
     compatible :: Subst -> Subst -> Bool
     compatible sub1 sub2 = and [e1 == e2 | (v1, e1) <- sub1, (v2, e2) <-sub2, v1==v2]
 
-    --test exprs
-    sub :: Subst
-    sub = [((Var 'x'),(Const 3)), ((Var 'y'),(Const 4))]
-
-    exp :: Expr
-    exp = (TwoOp Add (Var 'x')(Var 'y'))
-
     -- applies substitutions to expressions
     apply :: Subst -> Expr -> Expr
     apply substitution (Derive v expr) = Derive (apply substitution v) (apply substitution expr)

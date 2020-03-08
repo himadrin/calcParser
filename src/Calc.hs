@@ -63,7 +63,7 @@ module Calc where
         show (TwoOp two exp1 exp2) = "(" ++ (show exp1) ++ (show two) ++ (show exp2) ++ ")"
         show (OneOp one exp) = (show one) ++ "(" ++ (show exp) ++ ")"
         show (Derive var exp) = "(derive " ++ (show var) ++ ") " ++ (show exp)
-        show (Var c) = [c]
+        show (Var v) = [v]
         show (Const i) = show i
 
     --used formatting from pretty printing proofs

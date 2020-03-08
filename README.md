@@ -18,31 +18,39 @@ You should be able to call the executable:
 - /..SOME_PATH../bin/calcParser-exe
 ```
 
-### Plans:
+Alternatively to run the program - you can also type the command:
+```
+stack run
+```
 
-We want to export a module Calc which contains: 
+### Implementation:
 
- * Calc.hs - declares our data types. We currently use examples from lecture but we plan to improve upon them if it becomes necessary. 
+We have created a calculus solver with the following modules: 
 
-    * At the moment data types have been moved into parser because stack install would not compile - still looking into this
+ * Calc.hs - declares our data types. We have included instances deriving Eq which we use for our calculations and instances deriving Show  which we use for printing our output. 
 
- * Parser.hs - is our parser to take in user input and return expressions.
+ * Parser.hs - contains our parser to take in a string and return expressions. We also include a parser for laws which are written in Laws.txt and read in at the Main.
     
-    * We have used several libraries and tutorials which we cite in comments
-
-    * You can try out our parser by running cabal repl, loading our parser module, and then running parseTest pExpr on any string expression
-
-        * ex1: parseTest pExpr "(x+y)+z"
-        * ex2: parseTest pExpr "derive(x, x^2)"
-
- * Implementation.hs - takes in user input, does the math, creates a CalcDoc.
+ * Implementation.hs - contains our matchFunc, our apply function, and rewrites. Here is where we match expressions to laws in order to perform the derivation. 
     
-    * We now must write our Laws for calculus - we will do it here.
+    * We also implemented simple math in the case that two constants are separated by a binary operator. It should then do the math on the constants.
 
- * Output.hs - formates our CalcDoc in the appropriate way - whether we decide to print it/output it in a different way. 
+ * Output.hs - stepList calls rewrites and doMath recursively until we can no longer rewrite the function applying the laws in order to create a list of Steps associated with a law name. The last function final is used in main to handle the error from using parse from megaParsec.
+
+ * Laws.hs - includes our parsed list of laws - not necessary for running the code but could be useful for testing.
+
+ * Main.hs - First it takes in our law list, parses it, and creates a list of Law objects. Then it takes in an expression from stdin and parses it and then calls final on the parsed expression and prints it for the user!
+
+ * We have used several libraries and tutorials which we cite in comments
 
 You can find our github repo here: https://github.com/himadrin/calcParser
 
 
+### Contributors:
+Winter 2020: Himadri Narasimhamurthy, Ali Hagen, assistance from Prof. Joosten and from the textbook Thinking Functionally With Haskell.
+
+Thank you so much for your help!
+
+
 ### Next Steps:
-We would love to get this working with a web UI - unfortunately we did not have the time to do so!
+We would love to get this working with a web UI - unfortunately we did not have the time to do so but we are going to keep working on it!
